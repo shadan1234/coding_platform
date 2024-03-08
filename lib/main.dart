@@ -5,27 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'home.dart';
+import 'opening.dart';
 
 void main() {
- runApp(MyApp());
-
+  runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark(),
-        debugShowCheckedModeBanner:false ,
-        home: MultiProvider(
-
-            providers: [
-              ChangeNotifierProvider(create: (context) => UserData(),),
-            ],
-            child: Home())
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserData(),
+        ),
+      ],
+      child: MaterialApp(
+          theme: ThemeData.dark(),
+          debugShowCheckedModeBanner: false,
+          home: OpeningPage()),
     );
-
   }
 }
-

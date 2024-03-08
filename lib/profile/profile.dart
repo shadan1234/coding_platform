@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:coding_platform/data/user_data.dart';
 import 'package:coding_platform/size_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-
-import '../apis/api.dart';
 import '../models/user.dart';
 
 class Profile extends StatefulWidget {
@@ -17,34 +13,26 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  late Future<User> userData;
+  User? userData;
 
-  Future<User> fetchUserData() async {
-    final userData = Provider.of<UserData>(context, listen: false);
-    String url = Api.BaseUrl + Api.userInfo;
-    http.Response response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-
-      User user =
-          User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-      userData.setUser(user);
-      return user;
-    } else {
-      throw Exception('Failed to load user');
-    }
+  void fetchDataFromProvider(BuildContext context) {
+    print('s');
+    userData = Provider.of<UserData>(context, listen: false).user;
+    print('who');
+    // also could have done that in init State i could have called the api function and in api function returned the user and stored the user in my user variable which is in this class .
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    userData = fetchUserData();
-    super.initState();
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    fetchDataFromProvider(context);
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: userData,
+      future: Future.value(userData),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
           // print(snapshot.data.);
@@ -67,7 +55,8 @@ class _ProfileState extends State<Profile> {
                   ),
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: NetworkImage(snapshot.data.avatar??'https://userpic.codeforces.org/no-avatar.jpg'),
+                    backgroundImage: NetworkImage(snapshot.data.avatar ??
+                        'https://userpic.codeforces.org/no-avatar.jpg'),
                   ),
                   SizedBox(
                     height: 20,
@@ -85,7 +74,8 @@ class _ProfileState extends State<Profile> {
                         width: 10 * SizeConfig.safeBlockHorizontal,
                       ),
                       Text(
-                        '${snapshot.data.firstName} ${snapshot.data.lastName}'??'...',
+                        '${snapshot.data.firstName} ${snapshot.data.lastName}' ??
+                            '...',
                         style: TextStyle(fontSize: 18),
                       ),
                     ],
@@ -93,7 +83,6 @@ class _ProfileState extends State<Profile> {
                   SizedBox(
                     height: SizeConfig.safeBlockHorizontal,
                   ),
-
                   Row(
                     children: [
                       SizedBox(
@@ -106,9 +95,12 @@ class _ProfileState extends State<Profile> {
                       SizedBox(
                         width: 18 * SizeConfig.safeBlockHorizontal,
                       ),
-                      Text(
-                        snapshot.data.organization,
-                        style: TextStyle(fontSize: 14),
+                      Flexible(
+                        child: Text(
+                          snapshot.data.organization,
+                          softWrap: true,
+                          style: TextStyle(fontSize: 14),
+                        ),
                       ),
                     ],
                   ),
@@ -128,7 +120,7 @@ class _ProfileState extends State<Profile> {
                         width: 10 * SizeConfig.safeBlockHorizontal,
                       ),
                       Text(
-                          snapshot.data.country,
+                        snapshot.data.country,
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -149,7 +141,7 @@ class _ProfileState extends State<Profile> {
                         width: 13 * SizeConfig.safeBlockHorizontal,
                       ),
                       Text(
-                          '${snapshot.data.contribution}',
+                        '${snapshot.data.contribution}',
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -170,7 +162,7 @@ class _ProfileState extends State<Profile> {
                         width: 12 * SizeConfig.safeBlockHorizontal,
                       ),
                       Text(
-                          '${snapshot.data.rating}',
+                        '${snapshot.data.rating}',
                         style: TextStyle(fontSize: 14),
                       ),
                     ],

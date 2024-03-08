@@ -25,17 +25,49 @@
 // print("Final call: $req");
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
-class Api{
- static const String BaseUrl='https://codeforces.com/';
- static const String userInfo='api/user.info?handles=shadan122;&checkHistoricHandles=false';
- static const String userSubmissions='api/user.status?handle=shadan122&from=1&count=20';
- static const String contestList='api/contest.list';
- static const String contestPage='contest';
+import '../data/user_data.dart';
+import '../models/user.dart';
 
+class Api {}
 
+void fetchUserData(BuildContext context) async {
+  final userData = Provider.of<UserData>(context, listen: false);
+  String url = UserData.BaseUrl + UserData.userInfo;
+  http.Response response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    User user =
+        User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    userData.setUser(user);
+  } else {
+    throw Exception('Failed to load user');
+  }
 }
+// void fetchContestList(List<String>? upcomingContest,List<String>? pastContest,List<String>? pastContestLink, void Function(void Function()) setStateCallback ) async {
+//  String url = Api.BaseUrl + Api.contestList;
+//  http.Response response = await http.get(Uri.parse(url));
+//  upcomingContest=[];
+//  pastContest=[];
+//  pastContestLink=[];
+//
+//  List<dynamic> contestList = jsonDecode(response.body)['result'];
+//  // print(contestList);
+//  for (int i = 0; i < contestList.length; i++) {
+//   if (contestList[i]['phase'] == 'BEFORE') {
+//    upcomingContest?.add(contestList[i]['name']);
+//
+//    // print(contestList[i]['name']);
+//   } else {
+//    pastContest?.add(contestList[i]['name']);
+//    pastContestLink?.add('${Api.BaseUrl}/contest/${contestList[i]['id']}');
+//   }
+//   // setStateCallback();
+//  }
+//  setStateCallback(() {});
+// }
 
 // void main() async{
 //  print('hello');
