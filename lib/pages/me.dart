@@ -2,21 +2,21 @@ import 'dart:convert';
 
 import 'package:coding_platform/apis/api.dart';
 import 'package:coding_platform/data/user_data.dart';
-import 'package:coding_platform/profile/profile.dart';
+import 'package:coding_platform/pages/profile/profile.dart';
 import 'package:coding_platform/size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
 
-import 'models/user.dart';
+import '../models/user.dart';
 
-class Home extends StatefulWidget {
+class Me extends StatefulWidget {
   @override
-  State<Home> createState() => _HomeState();
+  State<Me> createState() => _MeState();
 }
 
-class _HomeState extends State<Home> {
+class _MeState extends State<Me> {
   List<String>? listOfSubmissions;
 
   List<String>? upcomingContest;
@@ -41,15 +41,18 @@ class _HomeState extends State<Home> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     fetchDataFromProvider(context);
   }
 
   void fetchDataFromProvider(BuildContext context) async {
-    print('20');
-    user = Provider.of<UserData>(context).user;
+    final userProvider=Provider.of<UserData>(context);
+    // if(userProvider.isAdmin==true){
+    //   userProvider.replace(userProvider.adminHandle);
+    // }
+    user = userProvider.user;
 
-    print(user);
-    print('242');
+
   }
 
   void fetchContestList() async {
@@ -94,6 +97,7 @@ class _HomeState extends State<Home> {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Codeforces'),
         actions: [
           Padding(

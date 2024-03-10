@@ -1,8 +1,9 @@
 import 'package:coding_platform/data/user_data.dart';
+import 'package:coding_platform/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'home.dart';
+import 'pages/me.dart';
 
 class OpeningPage extends StatelessWidget {
   TextEditingController controller = TextEditingController();
@@ -31,9 +32,11 @@ class OpeningPage extends StatelessWidget {
               ),
               ElevatedButton(
                   onPressed: () {
+                    userData.adminHandle=(controller.text);
+                    // userData.isAdmin=true;
                     userData.replace(controller.text);
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Home()));
+                        MaterialPageRoute(builder: (context) => HomePage()));
                   },
                   child: Text('Submit'))
             ],

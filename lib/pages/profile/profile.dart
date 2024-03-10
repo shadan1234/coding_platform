@@ -1,9 +1,9 @@
 import 'package:coding_platform/data/user_data.dart';
 import 'package:coding_platform/size_config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/user.dart';
+
+import '../../models/user.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
