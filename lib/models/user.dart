@@ -1,4 +1,5 @@
 class User {
+  int? isAdmin;
   String? lastName;
   String? firstName;
   String? country;
@@ -12,40 +13,51 @@ class User {
   String? rank;
   int? maxRating;
   String? maxRank;
+  List<String>? upcomingContest;
+  List<String>? pastContest;
+  List<String>? pastContestLink;
+  List<String>? recentSubmission;
 
-  User(
-      {this.firstName,
-      this.lastName,
-      this.rating,
-      this.avatar,
-      this.contribution,
-      this.country,
-      this.friendOfCount,
-      this.handle,
-      this.maxRank,
-      this.maxRating,
-      this.organization,
-      this.rank,
-      this.titlePhoto});
+  User({
+    this.firstName,
+    this.lastName,
+    this.rating,
+    this.avatar,
+    this.contribution,
+    this.country,
+    this.friendOfCount,
+    this.handle,
+    this.maxRank,
+    this.maxRating,
+    this.organization,
+    this.rank,
+    this.titlePhoto,
+    required this.upcomingContest,
+    required this.pastContest,
+    required this.pastContestLink,
+    required this.recentSubmission,
+  });
 
-  // factory constructor special type of constructor directly returns object of User
-  User.fromJson(Map<String, dynamic> json) {
-    firstName = json['result'][0]['firstName'];
-    lastName = json['result'][0]['lastName'];
-    country = json['result'][0]['country'];
-    rating = json['result'][0]['rating'];
-    friendOfCount = json['result'][0]['friendOfCount'];
-    titlePhoto = json['result'][0]['titlePhoto'];
-    handle = json['result'][0]['handle'];
-    avatar = json['result'][0]['avatar'];
-    contribution = json['result'][0]['contribution'];
-    organization = json['result'][0]['organization'];
-    rank = json['result'][0]['rank'];
-    maxRating = json['result'][0]['maxRating'];
-    maxRank = json['result'][0]['maxRank'];
-  }
+  User.fromMap(Map<String, dynamic> map)
+      : firstName = map['firstName'],
+        lastName = map['lastName'],
+        country = map['country'],
+        rating = map['rating'],
+        friendOfCount = map['friendOfCount'],
+        titlePhoto = map['titlePhoto'],
+        handle = map['handle'],
+        avatar = map['avatar'],
+        contribution = map['contribution'],
+        organization = map['organization'],
+        rank = map['rank'],
+        maxRating = map['maxRating'],
+        maxRank = map['maxRank'],
+        upcomingContest = List<String>.from(map['upcomingContest']),
+        pastContest = List<String>.from(map['pastContest']),
+        pastContestLink = List<String>.from(map['pastContestLink']),
+        recentSubmission = List<String>.from(map['recentSubmission']);
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'firstName': firstName,
       'lastName': lastName,
@@ -60,6 +72,10 @@ class User {
       'rank': rank,
       'maxRating': maxRating,
       'maxRank': maxRank,
+      'upcomingContest': upcomingContest,
+      'pastContest': pastContest,
+      'pastContestLink': pastContestLink,
+      'recentSubmission': recentSubmission,
     };
   }
 }

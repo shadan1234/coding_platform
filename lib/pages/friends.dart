@@ -29,6 +29,7 @@ List<String> friends=[];
   }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -74,9 +75,9 @@ List<String> friends=[];
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: (){
-                            final userProvider= Provider.of<UserData>(context,listen: false);
-                            // userProvider.isAdmin=false;
-                            userProvider.replace(friends[index]);
+                            final _userData= Provider.of<UserData>(context,listen: false);
+                            _userData.userHandle=friends[index];
+                            // userProvider.replace(friends[index]);
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>Me()));
                         },
                         child: ListTile(

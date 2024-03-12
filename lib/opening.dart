@@ -3,14 +3,12 @@ import 'package:coding_platform/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'pages/me.dart';
-
 class OpeningPage extends StatelessWidget {
   TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final userData = Provider.of<UserData>(context);
+    final userData = Provider.of<UserData>(context,listen: false);
     return Scaffold(
       body: Center(
         child: Padding(
@@ -32,11 +30,10 @@ class OpeningPage extends StatelessWidget {
               ),
               ElevatedButton(
                   onPressed: () {
-                    userData.adminHandle=(controller.text);
-                    // userData.isAdmin=true;
-                    userData.replace(controller.text);
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                    userData.userHandle = controller.text;
+                    userData.adminHandle=controller.text;
+                    // print(userData.userHandle);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
                   },
                   child: Text('Submit'))
             ],
