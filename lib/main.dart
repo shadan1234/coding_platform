@@ -5,13 +5,24 @@ import 'package:coding_platform/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
+import 'database/database_helper.dart';
+
+void main() async{
+  // WidgetsFlutterBinding.ensureInitialized();
+  //
+  // final databaseHelper = DatabaseHelper();
+  // final database=databaseHelper.database;
+  // final adminExist = await databaseHelper.isAdminExist();
+
+  runApp( MyApp(
+      // adminExist: adminExist
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  // final bool adminExist;
 
+  // MyApp({required this.adminExist});
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -24,7 +35,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
           theme: ThemeData.dark(),
           debugShowCheckedModeBanner: false,
-          home: OpeningPage()),
+          home:
+          // adminExist ? HomePage() :
+          OpeningPage()),
     );
   }
 }

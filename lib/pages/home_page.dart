@@ -22,8 +22,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: (value) {
           return setState(() {
-            final userProvider=Provider.of<UserData>(context,listen: false);
-            userProvider.replace(userProvider.adminHandle);
+            final _userData=Provider.of<UserData>(context,listen: false);
+            _userData.userHandle=(_userData.adminHandle);
             selectedIndex = value;
           });
         },
