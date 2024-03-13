@@ -1,4 +1,5 @@
 import 'package:coding_platform/data/friends_data.dart';
+import 'package:coding_platform/data/question_answer_data.dart';
 import 'package:coding_platform/data/user_data.dart';
 import 'package:coding_platform/opening.dart';
 import 'package:coding_platform/pages/home_page.dart';
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => UserData(),
         ),
-        ChangeNotifierProvider(create: (context)=>FriendsData())
+        ChangeNotifierProvider(create: (context)=>FriendsData()),
+        ChangeNotifierProvider(create: (context)=>QuestionAnswerData()),
       ],
       child: MaterialApp(
           theme: ThemeData.dark(),

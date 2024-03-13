@@ -1,4 +1,5 @@
 import 'package:coding_platform/models/user.dart';
+import 'package:coding_platform/pages/question_ans.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -43,6 +44,12 @@ class DatabaseHelper {
         await db.execute('''
         CREATE TABLE friendsHandle(
         handles TEXT)
+        ''');
+        await db.execute('''
+        CREATE TABLE geminiData(
+        question TEXT,
+        answer TEXT
+        )
         ''');
       },
     );
@@ -141,7 +148,30 @@ class DatabaseHelper {
       return handles;
     }
   }
+  Future<void> insertQuestionAnswer(QuestionAnswerPair pair) async {
+    final db = await database;
+    await db.insert(
+      'geminiData',
+      {'question':pair.question,'answer':pair.answer},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  Future<List<QuestionAnswerPair>> getQuestionAnswerList() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'geminiData',
 
+    );
+    List<QuestionAnswerPair>list=[];
+    if (maps.isEmpty) {
+      return [];
+    } else {
+      maps.forEach((element) {
+        list.add(QuestionAnswerPair(question:element['question'] , answer: element['answer']));
+      });
+      return list;
+    }
+  }
 
 
 }
