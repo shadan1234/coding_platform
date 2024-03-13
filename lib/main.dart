@@ -8,21 +8,21 @@ import 'package:provider/provider.dart';
 import 'database/database_helper.dart';
 
 void main() async{
-  // WidgetsFlutterBinding.ensureInitialized();
-  //
-  // final databaseHelper = DatabaseHelper();
-  // final database=databaseHelper.database;
-  // final adminExist = await databaseHelper.isAdminExist();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final databaseHelper = DatabaseHelper();
+  final database= await databaseHelper.database;
+  final adminExist = await databaseHelper.isAdminExist();
 
   runApp( MyApp(
-      // adminExist: adminExist
+      adminExist: adminExist
   ));
 }
 
 class MyApp extends StatelessWidget {
-  // final bool adminExist;
+  final bool adminExist;
 
-  // MyApp({required this.adminExist});
+  MyApp({required this.adminExist});
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData.dark(),
           debugShowCheckedModeBanner: false,
           home:
-          // adminExist ? HomePage() :
+          adminExist ? HomePage() :
           OpeningPage()),
     );
   }
