@@ -40,6 +40,10 @@ class DatabaseHelper {
           recentSubmission TEXT
         )
       ''');
+        await db.execute('''
+        CREATE TABLE friendsHandle(
+        handles TEXT)
+        ''');
       },
     );
   }
@@ -101,4 +105,43 @@ class DatabaseHelper {
     );
     return result.isNotEmpty;
   }
+  Future<User> getAdminUser()async{
+    final db = await database;
+    final result = await db.query(
+      'users',
+      where: 'isAdmin = ?',
+      whereArgs: [1], // Assuming isAdmin = 1 for the admin user
+    );
+    return User.fromMap(result[0]);
+  }
+
+  Future<void> insertFriendsUser(String userHandle) async {
+    final db = await database;
+    await db.insert(
+      'friendsHandle',
+      {'handles':userHandle},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // Retrieve a user by handle from the database
+  Future<List<String>?> getFriendsUsers() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'friendsHandle',
+
+    );
+    List<String>handles=[];
+    if (maps.isEmpty) {
+      return null;
+    } else {
+      maps.forEach((element) {
+        handles.add(element['handles']);
+      });
+      return handles;
+    }
+  }
+
+
+
 }

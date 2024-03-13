@@ -1,17 +1,13 @@
-import 'dart:convert';
-
 import 'package:coding_platform/data/user_data.dart';
 import 'package:coding_platform/pages/profile/profile.dart';
 import 'package:coding_platform/service/user_service.dart';
 import 'package:coding_platform/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../database/database_helper.dart';
 import '../models/user.dart';
-import '../models/user_profile.dart';
 
 class Me extends StatefulWidget {
   @override
@@ -19,31 +15,86 @@ class Me extends StatefulWidget {
 }
 
 class _MeState extends State<Me> {
-  late Future<User> user;
+  late Future<User> _user;
 
   @override
   void initState() {
-    // TODO: implement initState
-
     super.initState();
+    _user = _fetchUserData();
   }
 
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    final userData = context.read<UserData>();
-    // print(userData.userHandle);
-    user = UserService().fetchUserDataFromAPI(userData.userHandle!, context);
-    super.didChangeDependencies();
+  Future<User> _fetchUserData() async {
+    final userData = Provider.of<UserData>(context, listen: false);
+    final databaseHelper = DatabaseHelper();
+    String? adminHandle=userData.adminHandle;
+    if(adminHandle==null){
+      final adminUser=await databaseHelper.getAdminUser();
+      userData.adminHandle=adminUser.handle;
+      userData.userHandle=adminUser?.handle;
+    }
+    final storedUser =
+        await databaseHelper.getUserByHandle(userData.userHandle!);
+
+    if (storedUser != null) {
+      // User data found in local database, return it
+      userData.user=storedUser;
+      return storedUser;
+    } else {
+      // Fetch user data from API
+      final apiUserData = await UserService()
+          .fetchUserDataFromAPI(userData.userHandle!, context);
+      // Store fetched user data in local database
+      if(userData.userHandle==userData.adminHandle){
+      apiUserData.isAdmin=1;}else{
+        apiUserData.isAdmin=0;
+      }
+      userData.user=apiUserData;
+      await databaseHelper.insertUser(apiUserData);
+      // Return fetched user data
+      return apiUserData;
+    }
+  }
+
+  bool _isLoading = false;
+
+  void _refreshUserData() async {
+    setState(() {
+      _isLoading = true; // Set loading flag to true when refresh is initiated
+    });
+
+    try {
+      final userData = Provider.of<UserData>(context, listen: false);
+      final databaseHelper = DatabaseHelper();
+
+      final _user = await UserService().fetchUserDataFromAPI(userData.userHandle!, context);
+      if (userData.userHandle == userData.adminHandle) {
+        _user.isAdmin = 1;
+      } else {
+        _user.isAdmin = 0;
+      }
+
+      await databaseHelper.updateUser(_user);
+      setState(() {
+        _isLoading = false; // Set loading flag to false after data is fetched
+      });
+    } catch (error) {
+      setState(() {
+        _isLoading = false; // Set loading flag to false if an error occurs during fetching
+      });
+      // Handle error here (e.g., display a Snackbar)
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return FutureBuilder(
-        future: user,
+        future: _user,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting || _isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+         else if (snapshot.hasData) {
             return Scaffold(
                 appBar: AppBar(
                   automaticallyImplyLeading: false,
@@ -64,7 +115,8 @@ class _MeState extends State<Me> {
                         ),
                       ),
                     ),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.refresh))
+                    IconButton(
+                        onPressed: _refreshUserData, icon: Icon(Icons.refresh))
                   ],
                 ),
                 body: Padding(
@@ -218,12 +270,13 @@ class _MeState extends State<Me> {
                                 ],
                               )),
                         ])));
-          } else if (snapshot.hasError) {
+          }
+          else  {
             return Center(
               child: Text('${snapshot.error}'),
             );
-          } else
-            return Center(child: CircularProgressIndicator());
-        });
+          }
+        }
+        );
   }
 }

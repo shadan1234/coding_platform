@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:coding_platform/utils/user_data_singelton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -9,7 +10,9 @@ import '../models/user.dart';
 class UserService {
  // Create an instance of UserData
   Future<User> fetchUserDataFromAPI(String handle,BuildContext context) async {
-    final _userData=Provider.of<UserData>(context,listen: false);
+    final _userData= Provider.of<UserData>(context,listen: false);
+    // UserDataSingleton().userData;       // isko use kar skte hai in future for global objects withour restriction to widgets it has access
+
     final userProfile = await _fetchUserDetails(_userData.userInfoUrl);
     final contestsData = await fetchContests(context);
     final upcomingContests = contestsData['upcoming'];
